@@ -6,6 +6,7 @@ module pl.wsb {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires java.net.http;
+    requires org.junit.jupiter.api;
     exports pl.wsb.api;
     exports pl.wsb.model;
     exports pl.wsb.repository;

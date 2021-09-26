@@ -21,7 +21,6 @@ import pl.wsb.repository.SWFilmRepository;
 import pl.wsb.repository.SWPeopleRepository;
 import pl.wsb.service.SWAPIPeopleService;
 import pl.wsb.service.SWPeopleService;
-
 import java.time.LocalDate;
 import java.util.Optional;
 

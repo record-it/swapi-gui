@@ -3,6 +3,7 @@ package pl.wsb.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.List;
 
