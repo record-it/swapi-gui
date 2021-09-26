@@ -35,18 +35,19 @@ public class SWAPIPeopleService implements SWPeopleService {
 
     @Override
     public Optional<PersonDomain> findDomainById(int id) {
-        people.findByIdAsync(id, person -> {
-            PersonDomain domain = PersonMapper.toDomain(person);
+        Optional<Person> person = people.findByIdSync(id);
+        if (person.isPresent()) {
+            PersonDomain domain = PersonMapper.toDomain(person.get());
             domain.setFilms(new ArrayList<>());
-            List<String> urls = person.getFilms();
-            for(String url: urls){
+            List<String> urls = person.get().getFilms();
+            for (String url : urls) {
                 Optional<Film> film = films.findByUrl(url);
                 if (film.isPresent()) {
                     domain.getFilms().add(film.get());
                 }
             }
-
-        });
+            return Optional.of(domain);
+        }
         return Optional.empty();
     }
 
