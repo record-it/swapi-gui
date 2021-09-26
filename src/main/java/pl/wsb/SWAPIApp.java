@@ -11,20 +11,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import pl.wsb.model.Person;
+import pl.wsb.repository.SWAPIFilmRepository;
 import pl.wsb.repository.SWAPIPeopleRepository;
+import pl.wsb.repository.SWFilmRepository;
 import pl.wsb.repository.SWPeopleRepository;
 import pl.wsb.service.SWAPIPeopleService;
 import pl.wsb.service.SWPeopleService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 
 public class SWAPIApp extends Application {
     SWPeopleRepository peopleRepository = new SWAPIPeopleRepository();
-    SWPeopleService peopleService = new SWAPIPeopleService(peopleRepository);
+    SWFilmRepository filmRepository = new SWAPIFilmRepository();
+    SWPeopleService peopleService = new SWAPIPeopleService(filmRepository, peopleRepository);
     Label nameLabel = new Label("Nazwisko i imię");
     TextField name = new TextField();
     Label heightLabel = new Label("Wysokość");
