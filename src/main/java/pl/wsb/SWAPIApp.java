@@ -5,10 +5,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -20,12 +17,25 @@ import pl.wsb.repository.SWPeopleRepository;
 import pl.wsb.service.SWAPIPeopleService;
 import pl.wsb.service.SWPeopleService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 
 public class SWAPIApp extends Application {
     SWPeopleRepository peopleRepository = new SWAPIPeopleRepository();
     SWPeopleService peopleService = new SWAPIPeopleService(peopleRepository);
+    Label nameLabel = new Label("Nazwisko i imię");
+    TextField name = new TextField();
+    Label heightLabel = new Label("Wysokość");
+    TextField height = new TextField();
+    Label hairLabel = new Label("Kolor włosów");
+    TextField hair = new TextField();
+    Label filmsLabel = new Label("Filmy z udziałem postaci");
+    ListView<String> films = new ListView<>();
+    Label createdLabel = new Label("Data utworzenia");
+    DatePicker created = new DatePicker();
+    VBox personForm = new VBox();
     public static void main(String[] args) {
         launch();
     }
@@ -36,18 +46,34 @@ public class SWAPIApp extends Application {
     }
     private void swapiGui(Stage stage){
         VBox root = new VBox();
+        personForm.setSpacing(5);
+        personForm.setPadding(new Insets(10));
+        personForm.getChildren().addAll(
+                nameLabel, name,
+                heightLabel, height,
+                hairLabel, hair,
+                filmsLabel, films,
+                createdLabel, created
+        );
         root.setSpacing(10);
         root.setPadding(new Insets(10));
         Label label = new Label("Id osoby");
         TextField field = new TextField();
         Button button = new Button("Szukaj");
         TextArea info = new TextArea();
-        root.getChildren().addAll(label, field, button, info);
+        root.getChildren().addAll(label, field, button, info, personForm);
         button.setOnAction(event -> {
             String text = field.getText();
             int id = Integer.parseInt(text);
             peopleRepository.findByIdAsync(id, person -> {
-                info.setText(person.toString());
+                Platform.runLater(() -> {
+                    name.setText(person.getName());
+                    height.setText(person.getHeight());
+                    hair.setText(person.getHair_color());
+                    films.getItems().clear();
+                    films.getItems().addAll(person.getFilms());
+                    created.setValue(LocalDate.from(person.getCreated().toLocalDateTime()));
+                });
             });
         });
         Scene scene = new Scene(root, 400, 600);
