@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import pl.wsb.model.Film;
 import pl.wsb.model.Person;
@@ -30,7 +31,7 @@ public class SWAPIApp extends Application {
     SWFilmRepository filmRepository = new SWAPIFilmRepository();
     SWPeopleService peopleService = new SWAPIPeopleService(filmRepository, peopleRepository);
     Label nameLabel = new Label("Nazwisko i imię");
-    TextField name = new TextField();
+    Label name = new Label();
     Label heightLabel = new Label("Wysokość");
     TextField height = new TextField();
     Label hairLabel = new Label("Kolor włosów");
@@ -59,29 +60,33 @@ public class SWAPIApp extends Application {
                 filmsLabel, films,
                 createdLabel, created
         );
+        created.setDisable(true);
+        name.setDisable(true);
+        name.setFont(Font.font("Arial", 24));
         root.setSpacing(10);
         root.setPadding(new Insets(10));
         Label label = new Label("Id osoby");
         TextField field = new TextField();
         Button button = new Button("Szukaj");
-        TextArea info = new TextArea();
-        root.getChildren().addAll(label, field, button, info, personForm);
+        root.getChildren().addAll(label, field, button, personForm);
         button.setOnAction(event -> {
-            String text = field.getText();
-            int id = Integer.parseInt(text);
-            Optional<PersonDomain> person = peopleService.findDomainById(id);
-            if (person.isPresent()){
-                PersonDomain domain = person.get();
-                Platform.runLater(() -> {
-                    name.setText(domain.getName());
-                    height.setText(Double.toString(domain.getHeight()));
-                    films.getItems().clear();
-                    films.getItems().addAll(domain.getFilms());
-                    hair.setText(domain.getHairColor());
-                    created.setValue(LocalDate.from(domain.getCreated().toLocalDateTime()));
-                });
-
-            }
+            new Thread(() -> {
+                String text = field.getText();
+                int id = Integer.parseInt(text);
+                Optional<PersonDomain> person = peopleService.findDomainById(id);
+                if (person.isPresent()){
+                    PersonDomain domain = person.get();
+                    Platform.runLater(() -> {
+                        name.setText(domain.getName());
+                        height.setText(Double.toString(domain.getHeight()));
+                        films.getItems().clear();
+                        films.getItems().addAll(domain.getFilms());
+                        hair.setText(domain.getHairColor());
+                        created.setValue(LocalDate.from(domain.getCreated().toLocalDateTime()));
+                    });
+                }
+                }
+            ).start();
 //            peopleRepository.findByIdAsync(id, person -> {
 //                Platform.runLater(() -> {
 //                    name.setText(person.getName());
