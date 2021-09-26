@@ -15,7 +15,7 @@ public class PersonDomain {
     private String hairColor;
     private String skinColor;
     private String eyeColor;
-    private int birthYear;
+    private String birthYear;
     private String gender;
     private String homeworld;
     private List<Film> films;

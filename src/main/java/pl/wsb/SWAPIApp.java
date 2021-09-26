@@ -11,6 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import pl.wsb.model.Film;
+import pl.wsb.model.Person;
+import pl.wsb.model.PersonDomain;
 import pl.wsb.repository.SWAPIFilmRepository;
 import pl.wsb.repository.SWAPIPeopleRepository;
 import pl.wsb.repository.SWFilmRepository;
@@ -19,6 +22,7 @@ import pl.wsb.service.SWAPIPeopleService;
 import pl.wsb.service.SWPeopleService;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 public class SWAPIApp extends Application {
@@ -32,7 +36,7 @@ public class SWAPIApp extends Application {
     Label hairLabel = new Label("Kolor włosów");
     TextField hair = new TextField();
     Label filmsLabel = new Label("Filmy z udziałem postaci");
-    ListView<String> films = new ListView<>();
+    ListView<Film> films = new ListView<>();
     Label createdLabel = new Label("Data utworzenia");
     DatePicker created = new DatePicker();
     VBox personForm = new VBox();
@@ -65,16 +69,29 @@ public class SWAPIApp extends Application {
         button.setOnAction(event -> {
             String text = field.getText();
             int id = Integer.parseInt(text);
-            peopleRepository.findByIdAsync(id, person -> {
+            Optional<PersonDomain> person = peopleService.findDomainById(id);
+            if (person.isPresent()){
+                PersonDomain domain = person.get();
                 Platform.runLater(() -> {
-                    name.setText(person.getName());
-                    height.setText(person.getHeight());
-                    hair.setText(person.getHair_color());
+                    name.setText(domain.getName());
+                    height.setText(Double.toString(domain.getHeight()));
                     films.getItems().clear();
-                    films.getItems().addAll(person.getFilms());
-                    created.setValue(LocalDate.from(person.getCreated().toLocalDateTime()));
+                    films.getItems().addAll(domain.getFilms());
+                    hair.setText(domain.getHairColor());
+                    created.setValue(LocalDate.from(domain.getCreated().toLocalDateTime()));
                 });
-            });
+
+            }
+//            peopleRepository.findByIdAsync(id, person -> {
+//                Platform.runLater(() -> {
+//                    name.setText(person.getName());
+//                    height.setText(person.getHeight());
+//                    hair.setText(person.getHair_color());
+//                    films.getItems().clear();
+//                    films.getItems().addAll(person.getFilms());
+//                    created.setValue(LocalDate.from(person.getCreated().toLocalDateTime()));
+//                });
+//            });
         });
         Scene scene = new Scene(root, 400, 600);
         stage.setResizable(false);

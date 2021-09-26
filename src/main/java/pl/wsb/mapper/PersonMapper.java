@@ -9,7 +9,7 @@ public class PersonMapper {
         return PersonDomain.builder()
                 .name(person.getName())
                 .height(Double.parseDouble(person.getHeight()))
-                .birthYear(Integer.parseInt(person.getBirth_year()))
+                .birthYear(person.getBirth_year())
                 .mass(Double.parseDouble(person.getMass()))
                 .created(person.getCreated())
                 .edited(person.getEdited())
