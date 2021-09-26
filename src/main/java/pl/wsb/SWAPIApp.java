@@ -14,10 +14,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import pl.wsb.model.Person;
+import pl.wsb.repository.SWAPIPeopleRepository;
+import pl.wsb.repository.SWPeopleRepository;
+import pl.wsb.service.SWAPIPeopleService;
+import pl.wsb.service.SWPeopleService;
+
+import java.util.Optional;
 
 
 public class SWAPIApp extends Application {
-
+    SWPeopleRepository peopleRepository = new SWAPIPeopleRepository();
+    SWPeopleService peopleService = new SWAPIPeopleService(peopleRepository);
     public static void main(String[] args) {
         launch();
     }
@@ -35,7 +43,13 @@ public class SWAPIApp extends Application {
         Button button = new Button("Szukaj");
         TextArea info = new TextArea();
         root.getChildren().addAll(label, field, button, info);
-
+        button.setOnAction(event -> {
+            String text = field.getText();
+            int id = Integer.parseInt(text);
+            peopleRepository.findByIdAsync(id, person -> {
+                info.setText(person.toString());
+            });
+        });
         Scene scene = new Scene(root, 400, 600);
         stage.setResizable(false);
         stage.setScene(scene);

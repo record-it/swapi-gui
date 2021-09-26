@@ -8,6 +8,7 @@ import pl.wsb.model.Persons;
 
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class SWAPIPeopleRepository implements SWPeopleRepository {
     public static final ObjectMapper MAPPER = new ObjectMapper();
@@ -42,6 +43,27 @@ public class SWAPIPeopleRepository implements SWPeopleRepository {
                 System.err.println(e.getMessage());
             }
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void findByIdAsync(int id, Consumer<Person> callback) {
+        if (cache.containsKey(id)) {
+           callback.accept(cache.get(id));
+        } else {
+            try {
+                ApiHelper.getObjectFromApi(SWAPI_DEV_API_PEOPLE + id, id, body -> {
+                    try {
+                        Person person = MAPPER.readValue(body, Person.class);
+                        cache.put(id, person);
+                        callback.accept(person);
+                    } catch (JsonProcessingException e) {
+                        System.err.println(e.getMessage());
+                    }
+                });
+            } catch (URISyntaxException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 
