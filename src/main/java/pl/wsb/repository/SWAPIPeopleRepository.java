@@ -6,6 +6,7 @@ import pl.wsb.api.ApiHelper;
 import pl.wsb.model.Person;
 import pl.wsb.model.Persons;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Consumer;
@@ -42,6 +43,25 @@ public class SWAPIPeopleRepository implements SWPeopleRepository {
             } catch (URISyntaxException e) {
                 System.err.println(e.getMessage());
             }
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Person> findByIdSync(int id) {
+        if (cache.containsKey(id)){
+            return Optional.of(cache.get(id));
+        }
+        try {
+            String body = ApiHelper.getBodyFromApi(SWAPI_DEV_API_PEOPLE + id);
+            Person person = MAPPER.readValue(body, Person.class);
+            cache.put(id, person);
+            return Optional.of(person);
+        } catch (URISyntaxException e) {
+            return Optional.empty();
+        } catch (IOException e) {
+            return Optional.empty();
+        } catch (InterruptedException e) {
             return Optional.empty();
         }
     }

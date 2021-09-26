@@ -9,5 +9,7 @@ public interface SWPeopleRepository {
     List<Person> findAll();
     Optional<Person> findById(int id);
 
+    Optional<Person> findByIdSync(int id);
+
     void findByIdAsync(int id, Consumer<Person> callback);
 }
